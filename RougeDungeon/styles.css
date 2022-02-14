@@ -9,6 +9,48 @@ html, body {
 dialog { 
   text-align: center; 
 }
+#HeartsFull{
+  position: absolute;
+  top: 1em;
+  left: 1em;
+  right: 0.5em;
+}
+#HeartsEmpty{
+  position: absolute;
+  top: 1em;
+  left: 1em;
+  right: 0.5em;
+}
+.heartFull {
+  width: 4em;
+  height: 4em;
+}
+.heartEmpty{
+  width: 4em;
+  height: 4em;
+}
+#Points{
+  display: inline-block;
+  position: absolute;
+  top: 1em;
+  right: 2em;
+  text-align: center;
+  background-color: rgba(128,128,128,0.5);
+  padding: 0.5em;
+  font-size: 2em;
+  width: 10em;
+}
+
+.text{
+  width: 60%;
+  vertical-align: middle;
+  text-align: left;
+  margin: auto;
+  font-size: 1.5em;
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+}
+
 
 canvas.fullscreen { 
   width: 100vw; 

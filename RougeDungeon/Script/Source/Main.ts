@@ -68,13 +68,11 @@ namespace Script {
     viewport.adjustingCamera = false
     ƒ.AudioManager.default.listenTo(graph);
     ƒ.AudioManager.default.listenWith(graph.getComponent(ƒ.ComponentAudioListener));
-
     ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
     ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 120);  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
   }
 
   function update(_event: Event): void {
-    console.log(window.innerWidth/1000 + " " + window.innerHeight/1000)
     cmpCamera.projectOrthographic(-6 * window.innerWidth/1000, 6* window.innerWidth/1000, 6* window.innerHeight/1000, -6* window.innerHeight/1000);
     cameraNode.mtxLocal.translation = new ƒ.Vector3(agent.mtxLocal.translation.x, 0, 0)
     isGrounded = false

@@ -8,6 +8,21 @@ declare namespace Script {
     }
 }
 declare namespace Script {
+    import ƒ = FudgeCore;
+    class GameState extends ƒ.Mutable {
+        private static controller;
+        private static instance;
+        private static maxLife;
+        private static point;
+        private static domHud;
+        private constructor();
+        static get(): GameState;
+        static life(life: number): void;
+        static points(points: number): void;
+        protected reduceMutator(_mutator: ƒ.Mutator): void;
+    }
+}
+declare namespace Script {
 }
 declare namespace Script {
     import ƒ = FudgeCore;
@@ -21,10 +36,16 @@ declare namespace Script {
         message: string;
         item: items;
         private agentRB;
+        maxhealth: number;
+        health: number;
+        point: number;
         constructor();
         hndEvent: (_event: Event) => void;
         use: (_event: Event) => void;
         getRB(): void;
+        removelife(): void;
+        addlife(): void;
+        points(): void;
     }
 }
 declare namespace Script {

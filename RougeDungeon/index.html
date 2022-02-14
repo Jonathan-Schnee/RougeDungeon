@@ -14,6 +14,7 @@
 <!--Load FUDGE. You may want to download local copies to work offline and be independent from future changes! Developers working on FUDGE itself may want to create symlinks-->
 <script type="text/javascript" src="../Fudge/Core/Build/FudgeCore.js"></script>
 <script type="text/javascript" src="https://jirkadelloro.github.io/FUDGE/Aid/Build/FudgeAid.js"></script>
+<script type="text/javascript" src="https://jirkadelloro.github.io/FUDGE/UserInterface\Build/FudgeUserInterface.js"></script>
 
 <!--Link internal resources. The editor only loads the first, but at runtime, multiple files can contribute-->
 <link type="resources" src="Internal.json" />
@@ -31,19 +32,18 @@
 <canvas class="fullscreen">
 </canvas>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<div id="HeartsEmpty">
+    <img class="heartEmpty" id="heartEmpty0" src="Images/Heartempty.png" >
+    <img class="heartEmpty" id="heartEmpty1" src="Images/Heartempty.png" >
+    <img class="heartEmpty" id="heartEmpty2" src="Images/Heartempty.png" >
+</div>
+<div id="HeartsFull">
+    <img class="heartFull" id="heartFull0" src="Images/Heartfull.png" >
+    <img class="heartFull" id="heartFull1" src="Images/Heartfull.png" >
+    <img class="heartFull" id="heartFull2" src="Images/Heartfull.png" >
+</div>
+<div id="Points">
+    Points : <input class="text" type=text key="Points" value="0000000"  readonly />
+</div>
 </body>
 </html>

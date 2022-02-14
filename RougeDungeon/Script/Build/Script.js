@@ -35,6 +35,50 @@ var Script;
 var Script;
 (function (Script) {
     var ƒ = FudgeCore;
+    var ƒui = FudgeUserInterface;
+    class GameState extends ƒ.Mutable {
+        static controller;
+        static instance;
+        static maxLife = 3;
+        static point;
+        static domHud;
+        constructor() {
+            super();
+            GameState.domHud = document.querySelector("#HeartsFull");
+            GameState.instance = this;
+            GameState.controller = new ƒui.Controller(this, GameState.domHud);
+            console.log("Hud-Controller", GameState.controller);
+        }
+        static get() {
+            return GameState.instance || new GameState();
+        }
+        static life(life) {
+            this.get();
+            for (let h = 0; h < this.maxLife; h++) {
+                if (h < life) {
+                    GameState.domHud = GameState.controller.domElement.querySelector("#heartFull" + h);
+                    GameState.domHud.style.opacity = "100%";
+                }
+                else {
+                    GameState.domHud = GameState.controller.domElement.querySelector("#heartFull" + h);
+                    GameState.domHud.style.opacity = "0%";
+                }
+            }
+        }
+        static points(points) {
+            let domPoints = document.querySelector("input[key='Points']");
+            if (points.toString().length < 7)
+                domPoints.value = ('0000000' + points.toString()).substring(points.toString().length);
+            else
+                domPoints.value = "9999999";
+        }
+        reduceMutator(_mutator) { }
+    }
+    Script.GameState = GameState;
+})(Script || (Script = {}));
+var Script;
+(function (Script) {
+    var ƒ = FudgeCore;
     ƒ.Debug.info("Main Program Template running!");
     let viewport;
     let ctrForward = new ƒ.Control("Forward", 250, 0 /* PROPORTIONAL */);
@@ -89,7 +133,6 @@ var Script;
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 120); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
-        console.log(window.innerWidth / 1000 + " " + window.innerHeight / 1000);
         cmpCamera.projectOrthographic(-6 * window.innerWidth / 1000, 6 * window.innerWidth / 1000, 6 * window.innerHeight / 1000, -6 * window.innerHeight / 1000);
         cameraNode.mtxLocal.translation = new ƒ.Vector3(agent.mtxLocal.translation.x, 0, 0);
         isGrounded = false;
@@ -155,11 +198,15 @@ var Script;
         message = "CustomComponentScript added to ";
         item = items.Axe;
         agentRB;
+        maxhealth = 3;
+        health;
+        point;
         constructor() {
             super();
             // Don't start when running in editor
             if (ƒ.Project.mode == ƒ.MODE.EDITOR)
                 return;
+            this.health = this.maxhealth;
             // Listen to this component being added to or removed from a node
             this.addEventListener("componentAdd" /* COMPONENT_ADD */, this.hndEvent);
             this.addEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);
@@ -178,20 +225,16 @@ var Script;
         };
         use = (_event) => {
             let tree;
-            let treeRB;
             let stone;
-            let stoneRB;
             let type;
             if (this.agentRB.triggerings.length != 0) {
                 for (let rb of this.agentRB.triggerings) {
                     if (rb.collisionGroup == ƒ.COLLISION_GROUP.GROUP_3) {
                         tree = rb.node.getParent();
-                        treeRB = rb;
                         type = types.Tree;
                     }
                     if (rb.collisionGroup == ƒ.COLLISION_GROUP.GROUP_4) {
                         stone = rb.node.getParent();
-                        stoneRB = rb;
                         type = types.Stone;
                     }
                 }
@@ -203,16 +246,29 @@ var Script;
                 if (this.item == items.Pickaxe && type == types.Stone) {
                     //Call Trigger from Tree and call the Method in the ScriptTree
                     console.log("hit2");
+                    this.addlife();
                     stone.getComponent(Script.ScriptStone).mineStone();
                 }
             }
             if (this.item == items.Sword) {
                 //Call Trigger from Tree and call the Method in the ScriptTree
                 console.log("hit3");
+                this.removelife();
+                this.points();
             }
         };
         getRB() {
             this.agentRB = this.node.getComponent(ƒ.ComponentRigidbody);
+        }
+        removelife() {
+            this.health = this.health - 1;
+            Script.GameState.life(this.health);
+        }
+        addlife() {
+            Script.GameState.life(this.maxhealth);
+        }
+        points() {
+            Script.GameState.points(1);
         }
     }
     Script.ScriptAgent = ScriptAgent;
