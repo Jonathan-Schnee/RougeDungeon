@@ -178,7 +178,7 @@ var Script;
         cameraNode.addComponent(new ƒ.ComponentTransform());
         graph.addChild(cameraNode);
         canvas = document.querySelector("canvas");
-        cmpCamera.projectOrthographic(-6 * window.innerWidth, 6 * window.innerWidth, 6 * window.innerHeight, -6 * window.innerHeight);
+        cmpCamera.projectOrthographic(Script.camdata.left * window.innerWidth, Script.camdata.right * window.innerWidth, Script.camdata.bottom * window.innerHeight, Script.camdata.top * window.innerHeight);
         viewport = new ƒ.Viewport();
         viewport.initialize("Viewport", graph, cmpCamera, canvas);
         viewport.physicsDebugMode = ƒ.PHYSICS_DEBUGMODE.JOINTS_AND_COLLIDER;

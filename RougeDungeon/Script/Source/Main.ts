@@ -57,7 +57,7 @@ namespace Script {
     graph.addChild(cameraNode);
 
     canvas = document.querySelector("canvas");
-    cmpCamera.projectOrthographic(-6 * window.innerWidth, 6* window.innerWidth, 6* window.innerHeight, -6* window.innerHeight);
+    cmpCamera.projectOrthographic( camdata.left * window.innerWidth, camdata.right * window.innerWidth, camdata.bottom * window.innerHeight, camdata.top * window.innerHeight);
     viewport = new ƒ.Viewport();
     viewport.initialize("Viewport", graph, cmpCamera, canvas);
     viewport.physicsDebugMode = ƒ.PHYSICS_DEBUGMODE.JOINTS_AND_COLLIDER;
