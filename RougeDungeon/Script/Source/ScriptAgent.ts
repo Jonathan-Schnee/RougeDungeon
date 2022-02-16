@@ -15,7 +15,7 @@ namespace Script {
     public static readonly iSubclass: number = ƒ.Component.registerSubclass(ScriptAgent);
     // Properties may be mutated by users in the editor via the automatically created user interface
     public message: string = "CustomComponentScript added to ";
-    public item : items = items.Axe;
+    public item : items;
     private agentRB: ƒ.ComponentRigidbody;
     public maxhealth :number = 3;
     public health : number;
@@ -27,6 +27,8 @@ namespace Script {
         return;
 
       this.health = this.maxhealth;
+      this.changeItem(items.Axe);
+
       // Listen to this component being added to or removed from a node
       this.addEventListener(ƒ.EVENT.COMPONENT_ADD, this.hndEvent);
       this.addEventListener(ƒ.EVENT.COMPONENT_REMOVE, this.hndEvent);
@@ -93,6 +95,13 @@ namespace Script {
     }
     public points() : void {
       GameState.points(1);
+    }
+    public changeItem(i : items) : void{
+      if(this.item != i){
+        this.item = i;
+        GameState.chooseitems(items[this.item])
+      }
+
     }
   }
 }

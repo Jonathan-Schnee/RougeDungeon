@@ -2,6 +2,55 @@
 var Script;
 (function (Script) {
     var ƒ = FudgeCore;
+    let ctrForward = new ƒ.Control("Forward", 250, 0 /* PROPORTIONAL */);
+    ctrForward.setDelay(10);
+    class Controls {
+        isGrounded;
+        agent;
+        agentRB;
+        agentdampT;
+        agentScript;
+        constructor(agent, agentRB) {
+            this.agent = agent;
+            this.agentScript = this.agent.getComponent(Script.ScriptAgent);
+            this.agentRB = agentRB;
+            this.agentdampT = agentRB.dampTranslation;
+        }
+        controlls() {
+            this.isGrounded = false;
+            let direction = ƒ.Vector3.Y(-1);
+            let agentTransL = this.agent.mtxWorld.translation.clone;
+            agentTransL.x -= this.agent.getComponent(ƒ.ComponentMesh).mtxPivot.scaling.x / 2 - 0.02;
+            let rayL = ƒ.Physics.raycast(agentTransL, direction, 0.5, true, ƒ.COLLISION_GROUP.GROUP_2);
+            let agentTransR = this.agent.mtxWorld.translation.clone;
+            agentTransR.x += this.agent.getComponent(ƒ.ComponentMesh).mtxPivot.scaling.x / 2 - 0.02;
+            let rayR = ƒ.Physics.raycast(agentTransR, direction, 0.5, true, ƒ.COLLISION_GROUP.GROUP_2);
+            if (rayL.hit || rayR.hit) {
+                this.agentRB.dampTranslation = this.agentdampT;
+                this.isGrounded = true;
+            }
+            let forward = ƒ.Keyboard.mapToTrit([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT], [ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT]);
+            ctrForward.setInput(forward);
+            this.agentRB.applyForce(ƒ.Vector3.X(ctrForward.getOutput()));
+            if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE]) && this.isGrounded) {
+                this.agentRB.setVelocity(new ƒ.Vector3(this.agentRB.getVelocity().x, 11, this.agentRB.getVelocity().z));
+            }
+            if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.ONE])) {
+                this.agentScript.changeItem(Script.items.Axe);
+            }
+            if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.TWO])) {
+                this.agentScript.changeItem(Script.items.Pickaxe);
+            }
+            if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.THREE])) {
+                this.agentScript.changeItem(Script.items.Sword);
+            }
+        }
+    }
+    Script.Controls = Controls;
+})(Script || (Script = {}));
+var Script;
+(function (Script) {
+    var ƒ = FudgeCore;
     ƒ.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
     class CustomComponentScript extends ƒ.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
@@ -40,7 +89,6 @@ var Script;
         static controller;
         static instance;
         static maxLife = 3;
-        static point;
         static domHud;
         constructor() {
             super();
@@ -66,11 +114,26 @@ var Script;
             }
         }
         static points(points) {
+            this.get();
             let domPoints = document.querySelector("input[key='Points']");
             if (points.toString().length < 7)
                 domPoints.value = ('0000000' + points.toString()).substring(points.toString().length);
             else
                 domPoints.value = "9999999";
+        }
+        static chooseitems(activeItem) {
+            this.get();
+            let domItems = document.querySelector("#Items");
+            let i = 0;
+            for (let item of domItems.children) {
+                if (activeItem == item.id) {
+                    item.id = "active";
+                }
+                else {
+                    item.id = Script.items[i];
+                }
+                i++;
+            }
         }
         reduceMutator(_mutator) { }
     }
@@ -81,26 +144,22 @@ var Script;
     var ƒ = FudgeCore;
     ƒ.Debug.info("Main Program Template running!");
     let viewport;
-    let ctrForward = new ƒ.Control("Forward", 250, 0 /* PROPORTIONAL */);
-    ctrForward.setDelay(10);
     let agent;
     let agentRB;
     let agentScript;
-    let isGrounded;
     let ground;
-    let agentdampT;
     let graph;
-    let treeList;
-    let stoneList;
     let randomSeed;
     let random;
     let generator;
+    let controlls;
     let canvas;
     let cameraNode = new ƒ.Node("cameraNode");
     let cmpCamera = new ƒ.ComponentCamera();
     window.addEventListener("load", start);
     async function start(_event) {
         await ƒ.Project.loadResourcesFromHTML();
+        await loadData();
         graph = ƒ.Project.resources["Graph|2021-12-24T09:09:33.313Z|93679"];
         randomSeed = 70;
         random = new ƒ.Random(randomSeed);
@@ -112,59 +171,28 @@ var Script;
         generator = graph.getChildrenByName("Generator")[0];
         generator.getComponent(Script.ScriptGenerator).addTree(random);
         generator.getComponent(Script.ScriptGenerator).addStone(random);
-        treeList = generator.getChildrenByName("Trees")[0];
-        stoneList = generator.getChildrenByName("Stones")[0];
         generateCG(ground);
         agentRB = agent.getComponent(ƒ.ComponentRigidbody);
         agentRB.effectRotation = new ƒ.Vector3(0, 0, 0);
-        agentdampT = agentRB.dampTranslation;
         cameraNode.addComponent(cmpCamera);
         cameraNode.addComponent(new ƒ.ComponentTransform());
         graph.addChild(cameraNode);
         canvas = document.querySelector("canvas");
-        cmpCamera.projectOrthographic(-6 * window.innerWidth / 1000, 6 * window.innerWidth / 1000, 6 * window.innerHeight / 1000, -6 * window.innerHeight / 1000);
+        cmpCamera.projectOrthographic(-6 * window.innerWidth, 6 * window.innerWidth, 6 * window.innerHeight, -6 * window.innerHeight);
         viewport = new ƒ.Viewport();
         viewport.initialize("Viewport", graph, cmpCamera, canvas);
         viewport.physicsDebugMode = ƒ.PHYSICS_DEBUGMODE.JOINTS_AND_COLLIDER;
         viewport.adjustingCamera = false;
+        controlls = new Script.Controls(agent, agentRB);
         ƒ.AudioManager.default.listenTo(graph);
         ƒ.AudioManager.default.listenWith(graph.getComponent(ƒ.ComponentAudioListener));
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
-        ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 120); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+        ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 120);
     }
     function update(_event) {
-        cmpCamera.projectOrthographic(-6 * window.innerWidth / 1000, 6 * window.innerWidth / 1000, 6 * window.innerHeight / 1000, -6 * window.innerHeight / 1000);
+        cmpCamera.projectOrthographic(Script.camdata.left * window.innerWidth, Script.camdata.right * window.innerWidth, Script.camdata.bottom * window.innerHeight, Script.camdata.top * window.innerHeight);
         cameraNode.mtxLocal.translation = new ƒ.Vector3(agent.mtxLocal.translation.x, 0, 0);
-        isGrounded = false;
-        let direction = ƒ.Vector3.Y(-1);
-        let agentTransL = agent.mtxWorld.translation.clone;
-        agentTransL.x -= agent.getComponent(ƒ.ComponentMesh).mtxPivot.scaling.x / 2 - 0.02;
-        let rayL = ƒ.Physics.raycast(agentTransL, direction, 0.5, true, ƒ.COLLISION_GROUP.GROUP_2);
-        let agentTransR = agent.mtxWorld.translation.clone;
-        agentTransR.x += agent.getComponent(ƒ.ComponentMesh).mtxPivot.scaling.x / 2 - 0.02;
-        let rayR = ƒ.Physics.raycast(agentTransR, direction, 0.5, true, ƒ.COLLISION_GROUP.GROUP_2);
-        if (rayL.hit || rayR.hit) {
-            agentRB.dampTranslation = agentdampT;
-            isGrounded = true;
-        }
-        let forward = ƒ.Keyboard.mapToTrit([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT], [ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT]);
-        ctrForward.setInput(forward);
-        agentRB.applyForce(ƒ.Vector3.X(ctrForward.getOutput()));
-        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE]) && isGrounded) {
-            agentRB.setVelocity(new ƒ.Vector3(agentRB.getVelocity().x, 11, agentRB.getVelocity().z));
-        }
-        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.ONE]) && agentScript.item != Script.items.Axe) {
-            agentScript.item = Script.items.Axe;
-            console.log("1");
-        }
-        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.TWO]) && agentScript.item != Script.items.Pickaxe) {
-            agentScript.item = Script.items.Pickaxe;
-            console.log("2");
-        }
-        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.THREE]) && agentScript.item != Script.items.Sword) {
-            agentScript.item = Script.items.Sword;
-            console.log("3");
-        }
+        controlls.controlls();
         ƒ.Physics.world.simulate(); // if physics is included and used
         viewport.draw();
         ƒ.AudioManager.default.update();
@@ -174,6 +202,10 @@ var Script;
             let groundRB = g.getComponent(ƒ.ComponentRigidbody);
             groundRB.collisionGroup = ƒ.COLLISION_GROUP.GROUP_2;
         }
+    }
+    async function loadData() {
+        let rawCamData = await fetch("Script/Source/CameraConfig.json");
+        Script.camdata = JSON.parse(await rawCamData.text());
     }
 })(Script || (Script = {}));
 var Script;
@@ -196,7 +228,7 @@ var Script;
         static iSubclass = ƒ.Component.registerSubclass(ScriptAgent);
         // Properties may be mutated by users in the editor via the automatically created user interface
         message = "CustomComponentScript added to ";
-        item = items.Axe;
+        item;
         agentRB;
         maxhealth = 3;
         health;
@@ -207,6 +239,7 @@ var Script;
             if (ƒ.Project.mode == ƒ.MODE.EDITOR)
                 return;
             this.health = this.maxhealth;
+            this.changeItem(items.Axe);
             // Listen to this component being added to or removed from a node
             this.addEventListener("componentAdd" /* COMPONENT_ADD */, this.hndEvent);
             this.addEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);
@@ -269,6 +302,12 @@ var Script;
         }
         points() {
             Script.GameState.points(1);
+        }
+        changeItem(i) {
+            if (this.item != i) {
+                this.item = i;
+                Script.GameState.chooseitems(items[this.item]);
+            }
         }
     }
     Script.ScriptAgent = ScriptAgent;

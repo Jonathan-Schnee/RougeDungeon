@@ -1,5 +1,17 @@
 declare namespace Script {
     import ƒ = FudgeCore;
+    class Controls {
+        private isGrounded;
+        private agent;
+        private agentRB;
+        private agentdampT;
+        private agentScript;
+        constructor(agent: ƒ.Node, agentRB: ƒ.ComponentRigidbody);
+        controlls(): void;
+    }
+}
+declare namespace Script {
+    import ƒ = FudgeCore;
     class CustomComponentScript extends ƒ.ComponentScript {
         static readonly iSubclass: number;
         message: string;
@@ -13,16 +25,24 @@ declare namespace Script {
         private static controller;
         private static instance;
         private static maxLife;
-        private static point;
         private static domHud;
         private constructor();
         static get(): GameState;
         static life(life: number): void;
         static points(points: number): void;
+        static chooseitems(activeItem: string): void;
         protected reduceMutator(_mutator: ƒ.Mutator): void;
     }
 }
 declare namespace Script {
+    interface CamData {
+        left: number;
+        right: number;
+        top: number;
+        bottom: number;
+    }
+    export let camdata: CamData;
+    export {};
 }
 declare namespace Script {
     import ƒ = FudgeCore;
@@ -46,6 +66,7 @@ declare namespace Script {
         removelife(): void;
         addlife(): void;
         points(): void;
+        changeItem(i: items): void;
     }
 }
 declare namespace Script {

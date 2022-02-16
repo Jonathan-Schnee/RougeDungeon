@@ -6,7 +6,6 @@ namespace Script {
         private static controller: ƒui.Controller;
         private static instance: GameState;
         private static maxLife : number = 3;
-        private static point : string;
         private static domHud :HTMLDivElement;
 
         private constructor() {
@@ -35,13 +34,31 @@ namespace Script {
             }
 
         }
-        public static points(points : number){
-            let domPoints: HTMLInputElement = document.querySelector("input[key='Points']")
+        public static points(points : number) : void{
+            this.get();
+            let domPoints: HTMLInputElement = document.querySelector("input[key='Points']");
             if(points.toString().length < 7)
                 domPoints.value = ('0000000' + points.toString()).substring(points.toString().length);
             else
                 domPoints.value = "9999999";
         }
+
+        public static chooseitems(activeItem : string){
+            this.get();
+            let domItems : HTMLDivElement = document.querySelector("#Items");
+            let i : number = 0;
+            for(let item of domItems.children){
+                if(activeItem == item.id){
+                    item.id = "active";
+                }
+                else{
+                    item.id = items[i]
+                }
+                i++;
+            }
+        }
+
+
         protected reduceMutator(_mutator: ƒ.Mutator): void {/* */ }
     }
 }
