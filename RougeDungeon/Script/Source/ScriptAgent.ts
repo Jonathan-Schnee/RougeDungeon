@@ -18,7 +18,7 @@ namespace Script {
     public item: Items;
     public maxhealth: number = 3;
     public health: number;
-    public point: number;
+    public point: number = 0;
     private actionTarget: ƒ.Node;
     private actionType : Types;
     private swordTrigger : ƒ.ComponentRigidbody;

@@ -496,7 +496,7 @@ var Script;
         item;
         maxhealth = 3;
         health;
-        point;
+        point = 0;
         actionTarget;
         actionType;
         swordTrigger;
