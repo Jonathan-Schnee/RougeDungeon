@@ -120,7 +120,7 @@ declare namespace Script {
         use: (_event: Event) => void;
         removelife(): void;
         addlife(): void;
-        points(): void;
+        points(addpoint: number): void;
         changeItem(i: Items): void;
         action(_actionTarget: ƒ.Node, _actionType: Types): void;
     }

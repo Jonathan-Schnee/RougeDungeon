@@ -66,16 +66,18 @@ namespace Script {
     }
     public use = (_event: Event): void => {
         if(this.actionTarget != null){
-          if (this.item == Items.Axe && this.actionType == Types.Tree) {     
+          if (this.item == Items.Axe && this.actionType == Types.Tree) {  
+            this.points(1);   
             this.actionTarget.dispatchEvent(new CustomEvent("actionUse"));
           }
           if (this.item == Items.Pickaxe && this.actionType == Types.Stone) {
-              
+            this.points(5);
             this.actionTarget.dispatchEvent(new CustomEvent("actionUse"));
           }
         }
         if(this.enemy !=null){
           if (this.item == Items.Sword){
+            this.points(10);
             this.enemy.dispatchEvent(new CustomEvent("killEvent"));
           }
         }
@@ -87,8 +89,9 @@ namespace Script {
     public addlife(): void {
       Hud.life(this.maxhealth);
     }
-    public points(): void {
-      Hud.points(1);
+    public points(addpoint : number): void {
+      this.point += addpoint;
+      Hud.points(this.point);
     }
     public changeItem(i: Items): void {
       if (this.item != i) {

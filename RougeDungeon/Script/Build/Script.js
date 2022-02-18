@@ -541,14 +541,17 @@ var Script;
         use = (_event) => {
             if (this.actionTarget != null) {
                 if (this.item == Items.Axe && this.actionType == Types.Tree) {
+                    this.points(1);
                     this.actionTarget.dispatchEvent(new CustomEvent("actionUse"));
                 }
                 if (this.item == Items.Pickaxe && this.actionType == Types.Stone) {
+                    this.points(5);
                     this.actionTarget.dispatchEvent(new CustomEvent("actionUse"));
                 }
             }
             if (this.enemy != null) {
                 if (this.item == Items.Sword) {
+                    this.points(10);
                     this.enemy.dispatchEvent(new CustomEvent("killEvent"));
                 }
             }
@@ -560,8 +563,9 @@ var Script;
         addlife() {
             Script.Hud.life(this.maxhealth);
         }
-        points() {
-            Script.Hud.points(1);
+        points(addpoint) {
+            this.point += addpoint;
+            Script.Hud.points(this.point);
         }
         changeItem(i) {
             if (this.item != i) {
