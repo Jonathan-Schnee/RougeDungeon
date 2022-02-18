@@ -1,12 +1,12 @@
 namespace Script {
   import ƒ = FudgeCore;
   ƒ.Project.registerScriptNamespace(Script);  // Register the namespace to FUDGE for serialization
-  export enum items {
+  export enum Items {
     "Axe",
     "Pickaxe",
     "Sword"
   }
-  enum types {
+  export enum Types {
     "Tree",
     "Stone"
   }
@@ -15,11 +15,14 @@ namespace Script {
     public static readonly iSubclass: number = ƒ.Component.registerSubclass(ScriptAgent);
     // Properties may be mutated by users in the editor via the automatically created user interface
     public message: string = "CustomComponentScript added to ";
-    public item : items;
-    private agentRB: ƒ.ComponentRigidbody;
-    public maxhealth :number = 3;
-    public health : number;
-    public point : number;
+    public item: Items;
+    public maxhealth: number = 3;
+    public health: number;
+    public point: number;
+    private actionTarget: ƒ.Node;
+    private actionType : Types;
+    private swordTrigger : ƒ.ComponentRigidbody;
+    private enemy: ƒ.Node;
     constructor() {
       super();
       // Don't start when running in editor
@@ -27,11 +30,12 @@ namespace Script {
         return;
 
       this.health = this.maxhealth;
-      this.changeItem(items.Axe);
-
+      this.changeItem(Items.Axe);
+      
       // Listen to this component being added to or removed from a node
       this.addEventListener(ƒ.EVENT.COMPONENT_ADD, this.hndEvent);
       this.addEventListener(ƒ.EVENT.COMPONENT_REMOVE, this.hndEvent);
+      this.addEventListener(ƒ.EVENT.NODE_DESERIALIZED, this.hndEvent);
     }
 
     // Activate the functions of this component as response to events
@@ -45,63 +49,56 @@ namespace Script {
           this.removeEventListener(ƒ.EVENT.COMPONENT_ADD, this.hndEvent);
           this.removeEventListener(ƒ.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
+        case ƒ.EVENT.NODE_DESERIALIZED:
+          this.swordTrigger = this.node.getChildrenByName("SwordTrigger")[0].getComponent(ƒ.ComponentRigidbody);
+          this.swordTrigger.addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_ENTER, (_event : ƒ.EventPhysics) =>{
+            if(_event.cmpRigidbody.node.name == "Enemy"){
+              this.enemy = _event.cmpRigidbody.node
+            }
+          })
+          this.swordTrigger.addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_EXIT, (_event : ƒ.EventPhysics) =>{
+            if(_event.cmpRigidbody.node.name == "Enemy"){
+              this.enemy = null;
+            }
+          })
+          break;
       }
     }
     public use = (_event: Event): void => {
-      let tree: ƒ.Node
-      let stone : ƒ.Node;
-      let type : types;
-      if (this.agentRB.triggerings.length != 0) {
-        for (let rb of this.agentRB.triggerings) {
-          if (rb.collisionGroup == ƒ.COLLISION_GROUP.GROUP_3) {
-            tree = rb.node.getParent();
-            type = types.Tree;
+        if(this.actionTarget != null){
+          if (this.item == Items.Axe && this.actionType == Types.Tree) {     
+            this.actionTarget.dispatchEvent(new CustomEvent("actionUse"));
           }
-          if (rb.collisionGroup == ƒ.COLLISION_GROUP.GROUP_4) {
-            stone = rb.node.getParent();
-            type = types.Stone;
+          if (this.item == Items.Pickaxe && this.actionType == Types.Stone) {
+              
+            this.actionTarget.dispatchEvent(new CustomEvent("actionUse"));
           }
         }
-        if (this.item == items.Axe && type == types.Tree) {
-          //Call Trigger from Tree and call the Method in the ScriptTree
-          console.log("hit2");
-          tree.getComponent(ScriptTree).chopTree();
+        if(this.enemy !=null){
+          if (this.item == Items.Sword){
+            this.enemy.dispatchEvent(new CustomEvent("killEvent"));
+          }
         }
-        
-        if (this.item == items.Pickaxe&& type == types.Stone) {
-          //Call Trigger from Tree and call the Method in the ScriptTree
-          console.log("hit2");
-          this.addlife();
-          stone.getComponent(ScriptStone).mineStone();
-        }
-      }
-
-      if (this.item == items.Sword) {
-        //Call Trigger from Tree and call the Method in the ScriptTree
-        console.log("hit3");
-        this.removelife()
-        this.points()
-      }
     }
-    public getRB(): void {
-      this.agentRB = this.node.getComponent(ƒ.ComponentRigidbody);
+    public removelife(): void {
+      this.health = this.health - 1;
+      Hud.life(this.health);
     }
-    public removelife() : void {
-        this.health = this.health - 1;
-        GameState.life(this.health);
+    public addlife(): void {
+      Hud.life(this.maxhealth);
     }
-    public addlife() : void {
-      GameState.life(this.maxhealth);
+    public points(): void {
+      Hud.points(1);
     }
-    public points() : void {
-      GameState.points(1);
-    }
-    public changeItem(i : items) : void{
-      if(this.item != i){
+    public changeItem(i: Items): void {
+      if (this.item != i) {
         this.item = i;
-        GameState.chooseitems(items[this.item])
+        Hud.chooseItems(Items[this.item])
       }
-
+    }
+    public action(_actionTarget : ƒ.Node, _actionType : Types){
+      this.actionTarget = _actionTarget;
+      this.actionType = _actionType;
     }
   }
 }

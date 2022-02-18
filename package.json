@@ -1,0 +1,8 @@
+{
+  "name": "RougeDungeon",
+  "version": "1.0.0",
+  "main": "",
+  "scripts": {
+    "start": "node RougeDungeon/Script/Server/Server.js"
+  }
+}

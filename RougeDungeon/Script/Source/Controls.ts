@@ -9,24 +9,27 @@ namespace Script{
         private agentRB : ƒ.ComponentRigidbody;
         private agentdampT : number;
         private agentScript : ScriptAgent; 
+        private agentMesh : ƒ.ComponentMesh;
+        private swordtrigger : ƒ.Node;
 
         constructor(agent : ƒ.Node, agentRB : ƒ.ComponentRigidbody){
             this.agent = agent;
             this.agentScript = this.agent.getComponent(ScriptAgent);
             this.agentRB = agentRB;
-            this.agentdampT = agentRB.dampTranslation
+            this.agentdampT = agentRB.dampTranslation;
+            this.agentMesh = this.agent.getComponent(ƒ.ComponentMesh);
+            this.swordtrigger = this.agent.getChildrenByName("SwordTrigger")[0]
+
+            window.addEventListener("click", this.agentScript.use);
         }
 
         public controlls(){
             this.isGrounded = false
             let direction = ƒ.Vector3.Y(-1)
-            let agentTransL = this.agent.mtxWorld.translation.clone;
-            agentTransL.x -= this.agent.getComponent(ƒ.ComponentMesh).mtxPivot.scaling.x / 2 - 0.02;
-            let rayL = ƒ.Physics.raycast(agentTransL, direction, 0.5, true, ƒ.COLLISION_GROUP.GROUP_2)
-            let agentTransR = this.agent.mtxWorld.translation.clone;
-            agentTransR.x += this.agent.getComponent(ƒ.ComponentMesh).mtxPivot.scaling.x / 2 - 0.02;
-            let rayR = ƒ.Physics.raycast(agentTransR, direction, 0.5, true, ƒ.COLLISION_GROUP.GROUP_2)
-            if (rayL.hit || rayR.hit) {
+            let agentTrans = this.agent.mtxWorld.translation.clone;
+            agentTrans.x += (this.agentMesh.mtxPivot.scaling.x / 2 - 0.02) * - Math.cos(this.agentMesh.mtxPivot.rotation.y * Math.PI  / 180);
+            let ray = ƒ.Physics.raycast(agentTrans, direction, 0.5, true, ƒ.COLLISION_GROUP.GROUP_2)
+            if (ray.hit) {
               this.agentRB.dampTranslation = this.agentdampT;
               this.isGrounded = true
             }
@@ -40,13 +43,23 @@ namespace Script{
             }
         
             if(ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.ONE])){
-              this.agentScript.changeItem(items.Axe);
+              this.agentScript.changeItem(Items.Axe);
             }
             if(ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.TWO])){
-              this.agentScript.changeItem(items.Pickaxe);
+              this.agentScript.changeItem(Items.Pickaxe);
             }
             if(ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.THREE])){
-              this.agentScript.changeItem(items.Sword);
+              this.agentScript.changeItem(Items.Sword);
+            }
+            if(ctrForward.getOutput() < 0){
+              this.agentMesh.mtxPivot.rotation.y = 180;
+              
+              this.swordtrigger.mtxLocal.translation = new ƒ.Vector3(- (this.agentMesh.mtxPivot.scaling.x / 2 + this.swordtrigger.mtxLocal.scaling.x /2),0,1);
+              
+            }
+            if(ctrForward.getOutput()>0){
+              this.agentMesh.mtxPivot.rotation.y = 0;
+              this.swordtrigger.mtxLocal.translation = new ƒ.Vector3((this.agentMesh.mtxPivot.scaling.x / 2 + this.swordtrigger.mtxLocal.scaling.x /2),0,1);
             }
         }
     }

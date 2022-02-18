@@ -37,18 +37,14 @@ namespace Script {
     random = new ƒ.Random(randomSeed);
 
     agent = graph.getChildrenByName("Agent")[0];
-    agent.getComponent(ScriptAgent).getRB();
     agentScript = agent.getComponent(ScriptAgent);
-    window.addEventListener("click", agentScript.use);
-
 
     ground = graph.getChildrenByName("Ground")[0];
-
     generator = graph.getChildrenByName("Generator")[0];
     generator.getComponent(ScriptGenerator).addTree(random);
     generator.getComponent(ScriptGenerator).addStone(random);
 
-    generateCG(ground)
+    generateCG(ground, ƒ.COLLISION_GROUP.GROUP_2);
     agentRB = agent.getComponent(ƒ.ComponentRigidbody);
     agentRB.effectRotation = new ƒ.Vector3(0, 0, 0);
 
@@ -61,8 +57,10 @@ namespace Script {
     viewport = new ƒ.Viewport();
     viewport.initialize("Viewport", graph, cmpCamera, canvas);
     viewport.physicsDebugMode = ƒ.PHYSICS_DEBUGMODE.JOINTS_AND_COLLIDER;
-    viewport.adjustingCamera = false
-
+    //viewport.adjustingCamera = false
+    viewport.camera.mtxPivot.rotateY(180);
+    viewport.camera.mtxPivot.rotateX(20);
+    viewport.camera.mtxPivot.translateZ(-30);
     controlls = new Controls(agent, agentRB)
 
     ƒ.AudioManager.default.listenTo(graph);
@@ -75,18 +73,18 @@ namespace Script {
   function update(_event: Event): void {
     cmpCamera.projectOrthographic( camdata.left * window.innerWidth, camdata.right * window.innerWidth, camdata.bottom * window.innerHeight, camdata.top * window.innerHeight);
     cameraNode.mtxLocal.translation = new ƒ.Vector3(agent.mtxLocal.translation.x, 0, 0)
-
+    
     controlls.controlls();
-
-    ƒ.Physics.world.simulate();  // if physics is included and used
+    
     viewport.draw();
     ƒ.AudioManager.default.update();
+    ƒ.Physics.world.simulate();  // if physics is included and used
   }
 
-  function generateCG(ground: ƒ.Node) {
-    for (let g of ground.getChildren()) {
-      let groundRB = g.getComponent(ƒ.ComponentRigidbody)
-      groundRB.collisionGroup = ƒ.COLLISION_GROUP.GROUP_2
+  function generateCG(node: ƒ.Node, collisionGroup : ƒ.COLLISION_GROUP) {
+    for (let n of node.getChildren()) {
+      let nodeRB = n.getComponent(ƒ.ComponentRigidbody)
+      nodeRB.collisionGroup = collisionGroup;
     }
   }
 

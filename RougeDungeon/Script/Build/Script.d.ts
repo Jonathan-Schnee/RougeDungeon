@@ -6,6 +6,8 @@ declare namespace Script {
         private agentRB;
         private agentdampT;
         private agentScript;
+        private agentMesh;
+        private swordtrigger;
         constructor(agent: ƒ.Node, agentRB: ƒ.ComponentRigidbody);
         controlls(): void;
     }
@@ -20,17 +22,42 @@ declare namespace Script {
     }
 }
 declare namespace Script {
+    import ƒAid = FudgeAid;
+    enum JOB {
+        IDLE = 0,
+        ATTACK = 1,
+        DIE = 2,
+        ROTATE = 3
+    }
+    export class EnemyStateMachine extends ƒAid.ComponentStateMachine<JOB> {
+        static readonly iSubclass: number;
+        private static instructions;
+        private cmpBody;
+        constructor();
+        static get(): ƒAid.StateMachineInstructions<JOB>;
+        private static transitDefault;
+        private static actDefault;
+        private static actIdle;
+        private static actRotate;
+        private static actAttack;
+        private static actDie;
+        private hndEvent;
+        private update;
+    }
+    export {};
+}
+declare namespace Script {
     import ƒ = FudgeCore;
-    class GameState extends ƒ.Mutable {
+    class Hud extends ƒ.Mutable {
         private static controller;
         private static instance;
         private static maxLife;
         private static domHud;
         private constructor();
-        static get(): GameState;
+        static get(): Hud;
         static life(life: number): void;
         static points(points: number): void;
-        static chooseitems(activeItem: string): void;
+        static chooseItems(activeItem: string): void;
         protected reduceMutator(_mutator: ƒ.Mutator): void;
     }
 }
@@ -46,27 +73,34 @@ declare namespace Script {
 }
 declare namespace Script {
     import ƒ = FudgeCore;
-    enum items {
+    enum Items {
         "Axe" = 0,
         "Pickaxe" = 1,
         "Sword" = 2
     }
+    enum Types {
+        "Tree" = 0,
+        "Stone" = 1
+    }
     class ScriptAgent extends ƒ.ComponentScript {
         static readonly iSubclass: number;
         message: string;
-        item: items;
-        private agentRB;
+        item: Items;
         maxhealth: number;
         health: number;
         point: number;
+        private actionTarget;
+        private actionType;
+        private swordTrigger;
+        private enemy;
         constructor();
         hndEvent: (_event: Event) => void;
         use: (_event: Event) => void;
-        getRB(): void;
         removelife(): void;
         addlife(): void;
         points(): void;
-        changeItem(i: items): void;
+        changeItem(i: Items): void;
+        action(_actionTarget: ƒ.Node, _actionType: Types): void;
     }
 }
 declare namespace Script {
@@ -85,15 +119,19 @@ declare namespace Script {
     class ScriptStone extends ƒ.ComponentScript {
         static readonly iSubclass: number;
         percentage: number;
+        private cmpBody;
         constructor();
-        mineStone(): void;
+        action(): void;
+        private hndEvent;
     }
 }
 declare namespace Script {
     import ƒ = FudgeCore;
     class ScriptTree extends ƒ.ComponentScript {
         static readonly iSubclass: number;
+        private cmpBody;
         constructor();
-        chopTree(): void;
+        action(): void;
+        private hndEvent;
     }
 }

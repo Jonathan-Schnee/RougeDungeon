@@ -2,34 +2,34 @@ namespace Script {
     import ƒ = FudgeCore;
     import ƒui = FudgeUserInterface;
 
-    export class GameState extends ƒ.Mutable {
+    export class Hud extends ƒ.Mutable {
         private static controller: ƒui.Controller;
-        private static instance: GameState;
+        private static instance: Hud;
         private static maxLife : number = 3;
         private static domHud :HTMLDivElement;
 
         private constructor() {
             super();
-            GameState.domHud = document.querySelector("#HeartsFull");
-            GameState.instance = this;
-            GameState.controller = new ƒui.Controller(this, GameState.domHud);
-            console.log("Hud-Controller", GameState.controller);
+            Hud.domHud = document.querySelector("#HeartsFull");
+            Hud.instance = this;
+            Hud.controller = new ƒui.Controller(this, Hud.domHud);
+            console.log("Hud-Controller", Hud.controller);
         }
 
-        public static get(): GameState {
-            return GameState.instance || new GameState();
+        public static get(): Hud {
+            return Hud.instance || new Hud();
         }
 
         public static life(life: number) {
             this.get();
             for(let h = 0; h < this.maxLife; h++){
                 if(h < life){
-                    GameState.domHud = GameState.controller.domElement.querySelector("#heartFull" + h);
-                    GameState.domHud.style.opacity = "100%";
+                    Hud.domHud = Hud.controller.domElement.querySelector("#heartFull" + h);
+                    Hud.domHud.style.opacity = "100%";
                 }
                 else{
-                    GameState.domHud = GameState.controller.domElement.querySelector("#heartFull" + h);
-                    GameState.domHud.style.opacity = "0%";
+                    Hud.domHud = Hud.controller.domElement.querySelector("#heartFull" + h);
+                    Hud.domHud.style.opacity = "0%";
                 }
             }
 
@@ -43,7 +43,7 @@ namespace Script {
                 domPoints.value = "9999999";
         }
 
-        public static chooseitems(activeItem : string){
+        public static chooseItems(activeItem : string){
             this.get();
             let domItems : HTMLDivElement = document.querySelector("#Items");
             let i : number = 0;
@@ -52,7 +52,7 @@ namespace Script {
                     item.id = "active";
                 }
                 else{
-                    item.id = items[i]
+                    item.id = Items[i]
                 }
                 i++;
             }
