@@ -58,6 +58,9 @@ namespace Script {
             }
         }
 
+        public static showMain(){         
+            let dialog = document.querySelector("dialog");
+        }
 
         protected reduceMutator(_mutator: ƒ.Mutator): void {/* */ }
     }

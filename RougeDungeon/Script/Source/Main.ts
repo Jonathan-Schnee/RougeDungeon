@@ -5,7 +5,6 @@ namespace Script {
   let viewport: ƒ.Viewport;
   let agent: ƒ.Node;
   let agentRB: ƒ.ComponentRigidbody;
-  let agentScript : ScriptAgent;
 
   let ground: ƒ.Node;
   let graph: ƒ.Graph;
@@ -16,6 +15,8 @@ namespace Script {
   let canvas: HTMLCanvasElement
   let cameraNode: ƒ.Node = new ƒ.Node("cameraNode");
   let cmpCamera = new ƒ.ComponentCamera();
+  let singlePlayer : boolean;
+  let client : Multiplayer;
 
   interface CamData {
     left : number,
@@ -26,18 +27,71 @@ namespace Script {
 
   export let camdata: CamData;
 
+  interface SpawnData {
+    treePercent : number,
+    stonePercent : number
+  }
+  export let spawndata: SpawnData;
+
   window.addEventListener("load", <any>start);
 
-  async function start(_event: CustomEvent): Promise<void> {
+  async function start(_event: CustomEvent) : Promise<void> {
     await ƒ.Project.loadResourcesFromHTML();
     await loadData();
-    graph = <ƒ.Graph>ƒ.Project.resources["Graph|2021-12-24T09:09:33.313Z|93679"];
+    let single = document.getElementById("single");
+    let client = document.getElementById("multi");
+    single.addEventListener("click", function(_event){
+      let dialog = document.getElementById("question");
+      dialog.hidden = true;
+      dialog = document.getElementById("Hud");
+      dialog.hidden = false;
+      singlePlayer = true;
+      init();
+    });
+   client.addEventListener("click", function(_event){
+      let dialog = document.getElementById("question");
+      dialog.hidden = true;
+      singlePlayer = false;
+      multiplayer();
+    });  
 
+  }
+  async function multiplayer(){
+    client = new Multiplayer();
+    await client.connectToServer();
+    console.log(client.getID());
+    let dialog = document.getElementById("question");
+    dialog.hidden = true;
+    dialog = document.getElementById("connecting");
+    dialog.hidden = false;
+    dialog.querySelector("h1").textContent = "Your ID: " + client.getID();
+    let input : HTMLInputElement = document.querySelector("input[key='ID']");
+    dialog.addEventListener("keydown", function(_event){
+      if(_event.key == ƒ.KEYBOARD_CODE.ENTER){
+        client.setPatnerID(input.value)
+        input.disabled = true
+        client.send("Eingegeben")
+      }
+    })
+    let button = document.getElementById("play")
+    button.addEventListener("click", function(event){
+      if(input.disabled && client.getMessage() == "Eingegeben"){
+        dialog = document.getElementById("connecting");
+        dialog.hidden = true;
+        dialog = document.getElementById("Hud");
+        dialog.hidden = false;
+        init();
+      }
+    })
+  }
+
+  async function init(): Promise<void> {
+    graph = <ƒ.Graph>ƒ.Project.resources["Graph|2021-12-24T09:09:33.313Z|93679"];
+    Hud.showMain()
     randomSeed = 70;
     random = new ƒ.Random(randomSeed);
 
     agent = graph.getChildrenByName("Agent")[0];
-    agentScript = agent.getComponent(ScriptAgent);
 
     ground = graph.getChildrenByName("Ground")[0];
     generator = graph.getChildrenByName("Generator")[0];
@@ -57,10 +111,10 @@ namespace Script {
     viewport = new ƒ.Viewport();
     viewport.initialize("Viewport", graph, cmpCamera, canvas);
     viewport.physicsDebugMode = ƒ.PHYSICS_DEBUGMODE.JOINTS_AND_COLLIDER;
-    //viewport.adjustingCamera = false
-    viewport.camera.mtxPivot.rotateY(180);
-    viewport.camera.mtxPivot.rotateX(20);
-    viewport.camera.mtxPivot.translateZ(-30);
+    viewport.adjustingCamera = false
+    //viewport.camera.mtxPivot.rotateY(180);
+    // viewport.camera.mtxPivot.rotateX(20);
+    // viewport.camera.mtxPivot.translateZ(-30);
     controlls = new Controls(agent, agentRB)
 
     ƒ.AudioManager.default.listenTo(graph);
@@ -76,6 +130,8 @@ namespace Script {
     
     controlls.controlls();
     
+   client
+
     viewport.draw();
     ƒ.AudioManager.default.update();
     ƒ.Physics.world.simulate();  // if physics is included and used
@@ -91,6 +147,9 @@ namespace Script {
   async function loadData(): Promise<void>{
     let rawCamData: Response = await fetch("Script/Source/CameraConfig.json");
     camdata = JSON.parse(await rawCamData.text());
+
+    let rawSpawnData: Response = await fetch("Script/Source/SpawnPercentage.json");
+    spawndata = JSON.parse(await rawSpawnData.text());
   }
 
 }

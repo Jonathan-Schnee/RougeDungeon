@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="styles.css" />
 
 <!--Editor settings of this project-->
-<meta type="settings" autoview="Graph|2021-12-24T09:09:33.313Z|93679" project="{'name':'RougeDungeon','includeAutoViewScript':true,'graphAutoView':'Graph|2021-12-24T09:09:33.313Z|93679'}" panels="[{'type':'PanelProject','state':{}},{'type':'PanelGraph','state':{'graph':'Graph|2021-12-24T09:09:33.313Z|93679'}}]" />
+<meta type="settings" autoview="Graph|2021-12-24T09:09:33.313Z|93679" project="{'name':'RougeDungeon','includeAutoViewScript':false,'graphAutoView':'Graph|2021-12-24T09:09:33.313Z|93679'}" panels="[{'type':'PanelProject','state':{}},{'type':'PanelGraph','state':{'graph':'Graph|2021-12-24T09:09:33.313Z|93679'}}]" />
 
 <!--Activate the following line to include the FUDGE-version of Oimo-Physics. You may want to download a local copy to work offline and be independent from future changes!-->
 <script type="text/javascript" src="https://jirkadelloro.github.io/FUDGE/Physics/OimoPhysics.js"></script>
@@ -14,8 +14,9 @@
 <!--Load FUDGE. You may want to download local copies to work offline and be independent from future changes! Developers working on FUDGE itself may want to create symlinks-->
 <script type="text/javascript" src="../Fudge/Core/Build/FudgeCore.js"></script>
 <script type="text/javascript" src="https://jirkadelloro.github.io/FUDGE/Aid/Build/FudgeAid.js"></script>
-<script type="text/javascript" src="https://jirkadelloro.github.io/FUDGE/UserInterface\Build/FudgeUserInterface.js"></script>
-
+<script type="text/javascript" src="https://jirkadelloro.github.io/FUDGE/UserInterface/Build/FudgeUserInterface.js"></script>
+<script type="text/javascript" src="https://jirkadelloro.github.io/FUDGE/Net/Build/Server/FudgeServer.js"></script>
+<script type="text/javascript" src="https://jirkadelloro.github.io/FUDGE/Net/Build/Client/FudgeClient.js"></script>
 <!--Link internal resources. The editor only loads the first, but at runtime, multiple files can contribute-->
 <link type="resources" src="Internal.json" />
 
@@ -24,32 +25,45 @@
 </head>
 <body>
 <!--Dialog shown at startup only-->
-<dialog>
-<h1>Title (will be replaced by autoView)</h1>
-<p>click to start</p>
-</dialog>
+    <dialog id="question" open="">
+        <h1>Single or Multiplayer</h1>
+        <input id="single" type="button" value="Single" />
+        <input id="multi" type="button" value="Multi" />
+    </dialog>
+    <dialog id="connecting" open="" hidden="true">
+        <h1>
+</h1>
+        Partner ID: <input id="id" type="text" key="ID" />
+        <br />
+        <input id="play" type="button" value="Play" />
+    </dialog>
 <!--Canvas for FUDGE to render to-->
 <canvas class="fullscreen">
 </canvas>
 
-<div id="HeartsEmpty">
-    <img class="heartEmpty" id="heartEmpty0" src="Images/Heartempty.png" />
-    <img class="heartEmpty" id="heartEmpty1" src="Images/Heartempty.png" />
-    <img class="heartEmpty" id="heartEmpty2" src="Images/Heartempty.png" />
+<div id="Hud" hidden="true">
+    <div id="HeartsEmpty">
+        <img class="heartEmpty" id="heartEmpty0" src="Images/Heartempty.png" />
+        <img class="heartEmpty" id="heartEmpty1" src="Images/Heartempty.png" />
+        <img class="heartEmpty" id="heartEmpty2" src="Images/Heartempty.png" />
+    </div>
+    <div id="HeartsFull">
+        <img class="heartFull" id="heartFull0" src="Images/Heartfull.png" />
+        <img class="heartFull" id="heartFull1" src="Images/Heartfull.png" />
+        <img class="heartFull" id="heartFull2" src="Images/Heartfull.png" />
+    </div>
+    <div id="Items">
+        <img class="Item" id="Axe" src="Images/Axe.png" />
+        <img class="Item" id="Pickaxe" src="Images/Pickaxe.png" />
+        <img class="Item" id="Sword" src="Images/Sword.png" />
+    </div>
+    <div id="Points">
+        Points : <input class="text" type="text" key="Points" value="0000000" readonly="" />
+    </div>
 </div>
-<div id="HeartsFull">
-    <img class="heartFull" id="heartFull0" src="Images/Heartfull.png" />
-    <img class="heartFull" id="heartFull1" src="Images/Heartfull.png" />
-    <img class="heartFull" id="heartFull2" src="Images/Heartfull.png" />
-</div>
-<div id="Items">
-    <img class="Item" id="Axe" src="Images/Axe.png" />
-    <img class="Item" id="Pickaxe" src="Images/Pickaxe.png" />
-    <img class="Item" id="Sword" src="Images/Sword.png" />
-</div>
-<div id="Points">
-    Points : <input class="text" type="text" key="Points" value="0000000" readonly="" />
-</div>
+
+
+
 
 
 

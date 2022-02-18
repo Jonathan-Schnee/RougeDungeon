@@ -193,7 +193,7 @@ var Script;
                             this.transit(JOB.IDLE);
                         }
                     });
-                    let kill = this.node.addEventListener("killEvent", (_event) => {
+                    kill = this.node.addEventListener("killEvent", (_event) => {
                         this.transit(JOB.DIE);
                     });
                     break;
@@ -265,6 +265,9 @@ var Script;
                 i++;
             }
         }
+        static showMain() {
+            let dialog = document.querySelector("dialog");
+        }
         reduceMutator(_mutator) { }
     }
     Script.Hud = Hud;
@@ -276,7 +279,6 @@ var Script;
     let viewport;
     let agent;
     let agentRB;
-    let agentScript;
     let ground;
     let graph;
     let randomSeed;
@@ -286,15 +288,63 @@ var Script;
     let canvas;
     let cameraNode = new ƒ.Node("cameraNode");
     let cmpCamera = new ƒ.ComponentCamera();
+    let singlePlayer;
+    let client;
     window.addEventListener("load", start);
     async function start(_event) {
         await ƒ.Project.loadResourcesFromHTML();
         await loadData();
+        let single = document.getElementById("single");
+        let client = document.getElementById("multi");
+        single.addEventListener("click", function (_event) {
+            let dialog = document.getElementById("question");
+            dialog.hidden = true;
+            dialog = document.getElementById("Hud");
+            dialog.hidden = false;
+            singlePlayer = true;
+            init();
+        });
+        client.addEventListener("click", function (_event) {
+            let dialog = document.getElementById("question");
+            dialog.hidden = true;
+            singlePlayer = false;
+            multiplayer();
+        });
+    }
+    async function multiplayer() {
+        client = new Script.Multiplayer();
+        await client.connectToServer();
+        console.log(client.getID());
+        let dialog = document.getElementById("question");
+        dialog.hidden = true;
+        dialog = document.getElementById("connecting");
+        dialog.hidden = false;
+        dialog.querySelector("h1").textContent = "Your ID: " + client.getID();
+        let input = document.querySelector("input[key='ID']");
+        dialog.addEventListener("keydown", function (_event) {
+            if (_event.key == ƒ.KEYBOARD_CODE.ENTER) {
+                client.setPatnerID(input.value);
+                input.disabled = true;
+                client.send("Eingegeben");
+            }
+        });
+        let button = document.getElementById("play");
+        button.addEventListener("click", function (event) {
+            if (input.disabled && client.getMessage() == "Eingegeben") {
+                dialog = document.getElementById("connecting");
+                dialog.hidden = true;
+                dialog = document.getElementById("Hud");
+                dialog.hidden = false;
+                init();
+            }
+        });
+    }
+    async function init() {
         graph = ƒ.Project.resources["Graph|2021-12-24T09:09:33.313Z|93679"];
+        Script.Hud.showMain();
         randomSeed = 70;
         random = new ƒ.Random(randomSeed);
         agent = graph.getChildrenByName("Agent")[0];
-        agentScript = agent.getComponent(Script.ScriptAgent);
         ground = graph.getChildrenByName("Ground")[0];
         generator = graph.getChildrenByName("Generator")[0];
         generator.getComponent(Script.ScriptGenerator).addTree(random);
@@ -310,10 +360,10 @@ var Script;
         viewport = new ƒ.Viewport();
         viewport.initialize("Viewport", graph, cmpCamera, canvas);
         viewport.physicsDebugMode = ƒ.PHYSICS_DEBUGMODE.JOINTS_AND_COLLIDER;
-        //viewport.adjustingCamera = false
-        viewport.camera.mtxPivot.rotateY(180);
-        viewport.camera.mtxPivot.rotateX(20);
-        viewport.camera.mtxPivot.translateZ(-30);
+        viewport.adjustingCamera = false;
+        //viewport.camera.mtxPivot.rotateY(180);
+        // viewport.camera.mtxPivot.rotateX(20);
+        // viewport.camera.mtxPivot.translateZ(-30);
         controlls = new Script.Controls(agent, agentRB);
         ƒ.AudioManager.default.listenTo(graph);
         ƒ.AudioManager.default.listenWith(graph.getComponent(ƒ.ComponentAudioListener));
@@ -324,6 +374,7 @@ var Script;
         cmpCamera.projectOrthographic(Script.camdata.left * window.innerWidth, Script.camdata.right * window.innerWidth, Script.camdata.bottom * window.innerHeight, Script.camdata.top * window.innerHeight);
         cameraNode.mtxLocal.translation = new ƒ.Vector3(agent.mtxLocal.translation.x, 0, 0);
         controlls.controlls();
+        client;
         viewport.draw();
         ƒ.AudioManager.default.update();
         ƒ.Physics.world.simulate(); // if physics is included and used
@@ -337,7 +388,90 @@ var Script;
     async function loadData() {
         let rawCamData = await fetch("Script/Source/CameraConfig.json");
         Script.camdata = JSON.parse(await rawCamData.text());
+        let rawSpawnData = await fetch("Script/Source/SpawnPercentage.json");
+        Script.spawndata = JSON.parse(await rawSpawnData.text());
     }
+})(Script || (Script = {}));
+///<reference path="../../../Fudge/Net/Build/Client/FudgeClient.d.ts"/>
+var Script;
+///<reference path="../../../Fudge/Net/Build/Client/FudgeClient.d.ts"/>
+(function (Script) {
+    var ƒ = FudgeCore;
+    var ƒClient = FudgeNet.FudgeClient;
+    ƒ.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
+    let client = new ƒClient();
+    // keep a list of known clients, updated with information from the server
+    let _ownID;
+    let _notmyID;
+    let _message = "test";
+    let _receivedmessage;
+    class Multiplayer extends ƒ.Mutable {
+        constructor() {
+            super();
+            // Don't start when running in editor
+            if (ƒ.Project.mode == ƒ.MODE.EDITOR)
+                return;
+            // Listen to this component being added to or removed from a node
+            let event = this.addEventListener("sendMessage", this.sendMessage);
+        }
+        async connectToServer() {
+            let domServer = "wss://rougedungeon.herokuapp.com";
+            try {
+                client.connectToServer(domServer);
+                // connect to a server with the given url
+                await this.delay(1000);
+                // document.forms[0].querySelector("button#login").removeAttribute("disabled");
+                _ownID = client.id;
+                // install an event listener to be called when a message comes in
+                client.addEventListener(FudgeNet.EVENT.MESSAGE_RECEIVED, this.receiveMessage);
+            }
+            catch (_error) {
+                console.log(_error);
+                console.log("Make sure, FudgeServer is running and accessable");
+            }
+        }
+        delay(_milisec) {
+            return new Promise(resolve => {
+                setTimeout(() => { resolve(); }, _milisec);
+            });
+        }
+        async receiveMessage(_event) {
+            if (_event instanceof MessageEvent) {
+                let message = JSON.parse(_event.data);
+                if (message.command != FudgeNet.COMMAND.SERVER_HEARTBEAT && message.command != FudgeNet.COMMAND.CLIENT_HEARTBEAT) {
+                    _receivedmessage = JSON.stringify(message.content.text);
+                    _receivedmessage = _receivedmessage.replace(/['"]+/g, '');
+                }
+            }
+        }
+        send(message) {
+            _message = message;
+            this.dispatchEvent(new CustomEvent("sendMessage"));
+        }
+        sendMessage(_event) {
+            let protocol = "wss";
+            let message = _message;
+            let ws = protocol == "wss";
+            let receiver = _notmyID;
+            if (receiver != "")
+                // send the message to a specific client (target specified) via RTC (no route specified) or TCP (route = via server)
+                client.dispatch({ route: ws ? FudgeNet.ROUTE.VIA_SERVER : undefined, idTarget: receiver, content: { text: message } });
+        }
+        getID() {
+            return _ownID;
+        }
+        reduceMutator(_mutator) {
+            //   // delete properties that should not be mutated
+            //   // undefined properties and private fields (#) will not be included by default
+        }
+        setPatnerID(id) {
+            _notmyID = id;
+        }
+        getMessage() {
+            return _receivedmessage;
+        }
+    }
+    Script.Multiplayer = Multiplayer;
 })(Script || (Script = {}));
 var Script;
 (function (Script) {
@@ -450,8 +584,8 @@ var Script;
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = ƒ.Component.registerSubclass(ScriptGenerator);
         // Properties may be mutated by users in the editor via the automatically created user interface
-        treePercentage = 65;
-        stonePercentage = 65;
+        treePercentage;
+        stonePercentage;
         constructor() {
             super();
             // Don't start when running in editor
@@ -460,6 +594,7 @@ var Script;
             // Listen to this component being added to or removed from a node
         }
         addTree(random) {
+            this.treePercentage = Script.spawndata.treePercent;
             let treeTexture = FudgeCore.Project.resources["Material|2022-02-17T16:32:32.889Z|93547"];
             let trees = this.node.getChildrenByName("Trees")[0];
             for (let tree of trees.getChildren()) {
@@ -491,6 +626,7 @@ var Script;
             }
         }
         addStone(random) {
+            this.stonePercentage = Script.spawndata.stonePercent;
             let stones = this.node.getChildrenByName("Stones")[0];
             for (let stone of stones.getChildren()) {
                 let num = random.getRangeFloored(0, 101);

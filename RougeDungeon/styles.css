@@ -8,6 +8,8 @@ html, body {
 }
 
 dialog { 
+  position: absolute;
+  top: 40%;
   text-align: center; 
 }
 #HeartsFull{

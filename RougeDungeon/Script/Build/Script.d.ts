@@ -1,3 +1,4 @@
+/// <reference path="../../../Fudge/Net/Build/Client/FudgeClient.d.ts" />
 declare namespace Script {
     import ƒ = FudgeCore;
     class Controls {
@@ -58,6 +59,7 @@ declare namespace Script {
         static life(life: number): void;
         static points(points: number): void;
         static chooseItems(activeItem: string): void;
+        static showMain(): void;
         protected reduceMutator(_mutator: ƒ.Mutator): void;
     }
 }
@@ -69,7 +71,27 @@ declare namespace Script {
         bottom: number;
     }
     export let camdata: CamData;
+    interface SpawnData {
+        treePercent: number;
+        stonePercent: number;
+    }
+    export let spawndata: SpawnData;
     export {};
+}
+declare namespace Script {
+    import ƒ = FudgeCore;
+    class Multiplayer extends ƒ.Mutable {
+        constructor();
+        connectToServer(): Promise<void>;
+        delay(_milisec: number): Promise<void>;
+        receiveMessage(_event: any): Promise<void>;
+        send(message: string): void;
+        sendMessage(_event: Event): void;
+        getID(): string;
+        protected reduceMutator(_mutator: ƒ.Mutator): void;
+        setPatnerID(id: string): void;
+        getMessage(): string;
+    }
 }
 declare namespace Script {
     import ƒ = FudgeCore;

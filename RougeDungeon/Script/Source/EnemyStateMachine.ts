@@ -112,7 +112,7 @@ namespace Script {
                             this.transit(JOB.IDLE);
                         }
                     });
-                    let kill = this.node.addEventListener("killEvent", (_event: ƒ.EventPhysics) =>{
+                    kill = this.node.addEventListener("killEvent", (_event: ƒ.EventPhysics) =>{
                         this.transit(JOB.DIE);
                     });
                     break;

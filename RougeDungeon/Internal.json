@@ -82,33 +82,15 @@
     "ƒ.Graph": {
       "name": "Dungeon1",
       "components": {
-        "ComponentLight": [
+        "ComponentLight": [],
+        "ComponentAudio": [
           {
-            "ƒ.ComponentLight": {
-              "pivot": {
-                "translation": "[0, 0, 0]",
-                "rotation": "[170, 0, 0]",
-                "scaling": "[1, 1, 1]"
-              },
-              "light": {
-                "ƒ.LightDirectional": {
-                  "color": "[1, 1, 1, 1]"
-                }
-              }
-            }
-          },
-          {
-            "ƒ.ComponentLight": {
-              "pivot": {
-                "translation": "[0, 0, 0]",
-                "rotation": "[0, 0, 0]",
-                "scaling": "[1, 1, 1]"
-              },
-              "light": {
-                "ƒ.LightAmbient": {
-                  "color": "[0.3686274509803922, 0.3686274509803922, 0.3686274509803922, 1]"
-                }
-              }
+            "ƒ.ComponentAudio": {
+              "active": true,
+              "idResource": "Audio|2022-02-18T21:09:04.357Z|77875",
+              "playing": true,
+              "loop": true,
+              "volume": 0.10000000149011612
             }
           }
         ]
@@ -142,7 +124,7 @@
                       {
                         "ƒ.ComponentMaterial": {
                           "sortForAlpha": false,
-                          "clrPrimary": "[0.23529411764705882, 0.09803921568627451, 0.00392156862745098, 1]",
+                          "clrPrimary": "[0.2, 0.07058823529411765, 0, 1]",
                           "clrSecondary": "[1, 1, 1, 1]",
                           "pivot": {
                             "translation": "[0, 0]",
@@ -152,7 +134,7 @@
                           "Component": {
                             "active": true
                           },
-                          "idMaterial": "Material|2021-12-24T09:09:27.252Z|98104"
+                          "idMaterial": "Material|2021-12-24T09:10:10.404Z|40107"
                         }
                       }
                     ],
@@ -222,17 +204,17 @@
                       {
                         "ƒ.ComponentMaterial": {
                           "sortForAlpha": false,
-                          "clrPrimary": "[1, 1, 1, 1]",
+                          "clrPrimary": "[0.2, 0.07058823529411765, 0, 1]",
                           "clrSecondary": "[1, 1, 1, 1]",
                           "pivot": {
                             "translation": "[0, 0]",
                             "rotation": 0,
-                            "scaling": "[1, 1.000000238418579]"
+                            "scaling": "[1, 1]"
                           },
                           "Component": {
                             "active": true
                           },
-                          "idMaterial": "Material|2022-01-05T07:49:36.952Z|57384"
+                          "idMaterial": "Material|2021-12-24T09:10:10.404Z|40107"
                         }
                       }
                     ],
@@ -302,7 +284,7 @@
                       {
                         "ƒ.ComponentMaterial": {
                           "sortForAlpha": false,
-                          "clrPrimary": "[0, 0.3411764705882353, 0.054901960784313725, 1]",
+                          "clrPrimary": "[0.2, 0.07058823529411765, 0, 1]",
                           "clrSecondary": "[1, 1, 1, 1]",
                           "pivot": {
                             "translation": "[0, 0]",
@@ -382,7 +364,7 @@
                       {
                         "ƒ.ComponentMaterial": {
                           "sortForAlpha": false,
-                          "clrPrimary": "[0, 0.3411764705882353, 0.054901960784313725, 1]",
+                          "clrPrimary": "[0.2, 0.07058823529411765, 0, 1]",
                           "clrSecondary": "[1, 1, 1, 1]",
                           "pivot": {
                             "translation": "[0, 0]",
@@ -462,7 +444,7 @@
                       {
                         "ƒ.ComponentMaterial": {
                           "sortForAlpha": false,
-                          "clrPrimary": "[0, 0.3411764705882353, 0.054901960784313725, 1]",
+                          "clrPrimary": "[0.2, 0.07058823529411765, 0, 1]",
                           "clrSecondary": "[1, 1, 1, 1]",
                           "pivot": {
                             "translation": "[0, 0]",
@@ -542,7 +524,7 @@
                       {
                         "ƒ.ComponentMaterial": {
                           "sortForAlpha": false,
-                          "clrPrimary": "[0, 0.3411764705882353, 0.054901960784313725, 1]",
+                          "clrPrimary": "[0.2, 0.07058823529411765, 0, 1]",
                           "clrSecondary": "[1, 1, 1, 1]",
                           "pivot": {
                             "translation": "[0, 0]",
@@ -622,7 +604,7 @@
                       {
                         "ƒ.ComponentMaterial": {
                           "sortForAlpha": false,
-                          "clrPrimary": "[0, 0.3411764705882353, 0.054901960784313725, 1]",
+                          "clrPrimary": "[0.2, 0.07058823529411765, 0, 1]",
                           "clrSecondary": "[1, 1, 1, 1]",
                           "pivot": {
                             "translation": "[0, 0]",
@@ -702,7 +684,7 @@
                       {
                         "ƒ.ComponentMaterial": {
                           "sortForAlpha": false,
-                          "clrPrimary": "[0, 0.3411764705882353, 0.054901960784313725, 1]",
+                          "clrPrimary": "[0.2, 0.07058823529411765, 0, 1]",
                           "clrSecondary": "[1, 1, 1, 1]",
                           "pivot": {
                             "translation": "[0, 0]",
@@ -782,7 +764,7 @@
                       {
                         "ƒ.ComponentMaterial": {
                           "sortForAlpha": false,
-                          "clrPrimary": "[0, 0.3411764705882353, 0.054901960784313725, 1]",
+                          "clrPrimary": "[0.2, 0.07058823529411765, 0, 1]",
                           "clrSecondary": "[1, 1, 1, 1]",
                           "pivot": {
                             "translation": "[0, 0]",
@@ -862,7 +844,7 @@
                       {
                         "ƒ.ComponentMaterial": {
                           "sortForAlpha": false,
-                          "clrPrimary": "[0, 0.3411764705882353, 0.054901960784313725, 1]",
+                          "clrPrimary": "[0.2, 0.07058823529411765, 0, 1]",
                           "clrSecondary": "[1, 1, 1, 1]",
                           "pivot": {
                             "translation": "[0, 0]",
@@ -942,7 +924,7 @@
                       {
                         "ƒ.ComponentMaterial": {
                           "sortForAlpha": false,
-                          "clrPrimary": "[0, 0.3411764705882353, 0.054901960784313725, 1]",
+                          "clrPrimary": "[0.2, 0.07058823529411765, 0, 1]",
                           "clrSecondary": "[1, 1, 1, 1]",
                           "pivot": {
                             "translation": "[0, 0]",
@@ -1379,7 +1361,6 @@
                 {
                   "Script.ScriptAgent": {
                     "active": true,
-                    "message": "CustomComponentScript added to ",
                     "maxhealth": 3
                   }
                 }
@@ -1500,8 +1481,7 @@
                           }
                         }
                       }
-                    ],
-                    "ComponentMesh": []
+                    ]
                   },
                   "children": []
                 }
@@ -4595,6 +4575,14 @@
       ],
       "idResource": "Graph|2022-01-25T12:18:33.650Z|84540",
       "type": "Graph"
+    }
+  },
+  "Audio|2022-02-18T21:09:04.357Z|77875": {
+    "ƒ.Audio": {
+      "url": "Sound\\8BitCave.wav",
+      "idResource": "Audio|2022-02-18T21:09:04.357Z|77875",
+      "name": "Sound\\8BitCave.wav",
+      "type": "Audio"
     }
   }
 }

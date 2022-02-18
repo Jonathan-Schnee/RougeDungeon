@@ -2,23 +2,22 @@ namespace Script {
   import ƒ = FudgeCore;
   ƒ.Project.registerScriptNamespace(Script);  // Register the namespace to FUDGE for serialization
 
-
   export class ScriptGenerator extends ƒ.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
     public static readonly iSubclass: number = ƒ.Component.registerSubclass(ScriptGenerator);
     // Properties may be mutated by users in the editor via the automatically created user interface
-    private treePercentage: number = 65;
-    private stonePercentage: number = 65;
+    private treePercentage: number;
+    private stonePercentage: number;
     constructor() {
       super();
 
       // Don't start when running in editor
       if (ƒ.Project.mode == ƒ.MODE.EDITOR)
         return;
-
       // Listen to this component being added to or removed from a node
     }
-    public addTree(random: ƒ.Random): void {
+    public addTree(random: ƒ.Random): void {      
+      this.treePercentage = spawndata.treePercent;
       let treeTexture : ƒ.Material = <ƒ.Material>FudgeCore.Project.resources["Material|2022-02-17T16:32:32.889Z|93547"];
       let trees: ƒ.Node = this.node.getChildrenByName("Trees")[0];
       for (let tree of trees.getChildren()) {
@@ -50,6 +49,7 @@ namespace Script {
       }
     }
     public addStone(random: ƒ.Random): void {
+      this.stonePercentage = spawndata.stonePercent;
       let stones: ƒ.Node = this.node.getChildrenByName("Stones")[0];
       for (let stone of stones.getChildren()) {
         let num = random.getRangeFloored(0, 101);
