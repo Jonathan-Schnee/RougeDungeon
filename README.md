@@ -12,7 +12,7 @@
 | Nr | Criterion       | Explanation                                                                                                              |
 |---:|-------------------|---------------------------------------------------------------------------------------------------------------------|
 |  0 | Units and Positions | The coordinate system is the X-Y plane. All entities (Agent, Enemies) are 1 unit high. The graph is 3 dimensional but the camera is ortographic so it looks like 2D |
-|  1 | Hierarchy         | |
+|  1 | Hierarchy         | The hierarchy is structured in such a way that the trees, stones have their own parent node. So I can traverse through them and generate them. The other nodes are also nested, but this has no deeper meaning and is only there for the sake of beauty.|
 |  2 | Editor            | The Ground, Agent, Tree, Stone, Enemies and Walls were made all in the editor. But the Trees and Stone are just placeholders for the real ones. This decision was made because I have a seed generation in the program that places the trees randomly with percentage and give them a random height. |
 |  3 | Scriptcomponents  | I use the script components for almost every class. So trees, stones, a generation class for those two and for the agent. This has the advantage that on the one hand everything is modular and on the other hand the code is clearer because you can read it better if it is not 1000 lines long. |
 |  4 | Extend            | I have the CustomComponents and the StateMachiene from the Fudgecore extended although the second belongs to the FudgeAid. I use these because they already predefine a lot and I only have to add a little.  |

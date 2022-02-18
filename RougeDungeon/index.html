@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="styles.css" />
 
 <!--Editor settings of this project-->
-<meta type="settings" autoview="Graph|2021-12-24T09:09:33.313Z|93679" project="{'name':'RougeDungeon','includeAutoViewScript':false,'graphAutoView':'Graph|2021-12-24T09:09:33.313Z|93679'}" panels="[{'type':'PanelProject','state':{}},{'type':'PanelGraph','state':{'graph':'Graph|2021-12-24T09:09:33.313Z|93679'}}]" />
+<meta type="settings" autoview="Graph|2021-12-24T09:09:33.313Z|93679" project="{'name':'RougeDungeon','includeAutoViewScript':true,'graphAutoView':'Graph|2021-12-24T09:09:33.313Z|93679'}" panels="[{'type':'PanelProject','state':{}},{'type':'PanelGraph','state':{'graph':'Graph|2021-12-24T09:09:33.313Z|93679'}}]" />
 
 <!--Activate the following line to include the FUDGE-version of Oimo-Physics. You may want to download a local copy to work offline and be independent from future changes!-->
 <script type="text/javascript" src="https://jirkadelloro.github.io/FUDGE/Physics/OimoPhysics.js"></script>
@@ -25,23 +25,22 @@
 </head>
 <body>
 <!--Dialog shown at startup only-->
-    <dialog id="question" open="">
+    <dialog id="question" open>
         <h1>Single or Multiplayer</h1>
         <input id="single" type="button" value="Single" />
         <input id="multi" type="button" value="Multi" />
     </dialog>
-    <dialog id="connecting" open="" hidden="true">
-        <h1>
-</h1>
+    <dialog id="connecting" open hidden =true>
+        <h1></h1>
         Partner ID: <input id="id" type="text" key="ID" />
-        <br />
+        <br>
         <input id="play" type="button" value="Play" />
     </dialog>
 <!--Canvas for FUDGE to render to-->
 <canvas class="fullscreen">
 </canvas>
 
-<div id="Hud" hidden="true">
+<div id="Hud" hidden =true>
     <div id="HeartsEmpty">
         <img class="heartEmpty" id="heartEmpty0" src="Images/Heartempty.png" />
         <img class="heartEmpty" id="heartEmpty1" src="Images/Heartempty.png" />
@@ -61,7 +60,6 @@
         Points : <input class="text" type="text" key="Points" value="0000000" readonly="" />
     </div>
 </div>
-
 
 
 
