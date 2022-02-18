@@ -496,7 +496,7 @@ var Script;
         item;
         maxhealth = 3;
         health;
-        point = 0;
+        point;
         actionTarget;
         actionType;
         swordTrigger;
@@ -508,6 +508,7 @@ var Script;
                 return;
             this.health = this.maxhealth;
             this.changeItem(Items.Axe);
+            this.point = 0;
             // Listen to this component being added to or removed from a node
             this.addEventListener("componentAdd" /* COMPONENT_ADD */, this.hndEvent);
             this.addEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);

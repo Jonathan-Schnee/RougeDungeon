@@ -18,7 +18,7 @@ namespace Script {
     public item: Items;
     public maxhealth: number = 3;
     public health: number;
-    public point: number = 0;
+    public point: number;
     private actionTarget: ƒ.Node;
     private actionType : Types;
     private swordTrigger : ƒ.ComponentRigidbody;
@@ -31,7 +31,7 @@ namespace Script {
 
       this.health = this.maxhealth;
       this.changeItem(Items.Axe);
-      
+      this.point = 0;
       // Listen to this component being added to or removed from a node
       this.addEventListener(ƒ.EVENT.COMPONENT_ADD, this.hndEvent);
       this.addEventListener(ƒ.EVENT.COMPONENT_REMOVE, this.hndEvent);
