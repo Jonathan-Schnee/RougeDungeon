@@ -243,9 +243,17 @@ var Script;
                 }
             }
         }
-        static points(points) {
+        static ownpoints(points) {
             this.get();
             let domPoints = document.querySelector("input[key='Points']");
+            if (points.toString().length < 7)
+                domPoints.value = ('0000000' + points.toString()).substring(points.toString().length);
+            else
+                domPoints.value = "9999999";
+        }
+        static fiendpoints(points) {
+            this.get();
+            let domPoints = document.querySelector("input[key='FriendPoints']");
             if (points.toString().length < 7)
                 domPoints.value = ('0000000' + points.toString()).substring(points.toString().length);
             else
@@ -333,6 +341,8 @@ var Script;
             if (input.disabled && client.getMessage() == "Eingegeben") {
                 dialog = document.getElementById("connecting");
                 dialog.hidden = true;
+                dialog = document.getElementById("FriendPoints");
+                dialog.hidden = false;
                 dialog = document.getElementById("Hud");
                 dialog.hidden = false;
                 init();
@@ -374,7 +384,7 @@ var Script;
         cmpCamera.projectOrthographic(Script.camdata.left * window.innerWidth, Script.camdata.right * window.innerWidth, Script.camdata.bottom * window.innerHeight, Script.camdata.top * window.innerHeight);
         cameraNode.mtxLocal.translation = new ƒ.Vector3(agent.mtxLocal.translation.x, 0, 0);
         controlls.controlls();
-        client;
+        receiveData();
         viewport.draw();
         ƒ.AudioManager.default.update();
         ƒ.Physics.world.simulate(); // if physics is included and used
@@ -390,6 +400,16 @@ var Script;
         Script.camdata = JSON.parse(await rawCamData.text());
         let rawSpawnData = await fetch("Script/Source/SpawnPercentage.json");
         Script.spawndata = JSON.parse(await rawSpawnData.text());
+    }
+    function sendData(message) {
+        client.send(message);
+    }
+    Script.sendData = sendData;
+    function receiveData() {
+        let m = client.getMessage();
+        if (/^\d+$/.test(m)) {
+            Script.Hud.fiendpoints(Number(m));
+        }
     }
 })(Script || (Script = {}));
 ///<reference path="../../../Fudge/Net/Build/Client/FudgeClient.d.ts"/>
@@ -415,7 +435,7 @@ var Script;
             let event = this.addEventListener("sendMessage", this.sendMessage);
         }
         async connectToServer() {
-            let domServer = "wss://rougedungeon.herokuapp.com";
+            let domServer = "ws://127.0.0.1:8081"; //wss://rougedungeon.herokuapp.com
             try {
                 client.connectToServer(domServer);
                 // connect to a server with the given url
@@ -566,7 +586,8 @@ var Script;
         }
         points(addpoint) {
             this.point += addpoint;
-            Script.Hud.points(this.point);
+            Script.Hud.ownpoints(this.point);
+            Script.sendData(this.point.toString());
         }
         changeItem(i) {
             if (this.item != i) {

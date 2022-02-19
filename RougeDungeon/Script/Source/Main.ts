@@ -78,6 +78,8 @@ namespace Script {
       if(input.disabled && client.getMessage() == "Eingegeben"){
         dialog = document.getElementById("connecting");
         dialog.hidden = true;
+        dialog = document.getElementById("FriendPoints");
+        dialog.hidden = false;
         dialog = document.getElementById("Hud");
         dialog.hidden = false;
         init();
@@ -130,7 +132,7 @@ namespace Script {
     
     controlls.controlls();
     
-   client
+    receiveData();
 
     viewport.draw();
     ƒ.AudioManager.default.update();
@@ -151,5 +153,13 @@ namespace Script {
     let rawSpawnData: Response = await fetch("Script/Source/SpawnPercentage.json");
     spawndata = JSON.parse(await rawSpawnData.text());
   }
-
+  export function sendData(message : string){
+    client.send(message);
+  }
+  function receiveData(){
+    let m = client.getMessage();
+    if(/^\d+$/.test(m)){
+      Hud.fiendpoints(Number(m))
+    }
+  }
 }

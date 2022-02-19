@@ -91,12 +91,13 @@ namespace Script {
     }
     public points(addpoint : number): void {
       this.point += addpoint;
-      Hud.points(this.point);
+      Hud.ownpoints(this.point);
+      sendData(this.point.toString())
     }
     public changeItem(i: Items): void {
       if (this.item != i) {
         this.item = i;
-        Hud.chooseItems(Items[this.item])
+        Hud.chooseItems(Items[this.item]) 
       }
     }
     public action(_actionTarget : ƒ.Node, _actionType : Types){

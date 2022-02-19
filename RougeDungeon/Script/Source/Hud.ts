@@ -34,9 +34,17 @@ namespace Script {
             }
 
         }
-        public static points(points : number) : void{
+        public static ownpoints(points : number) : void{
             this.get();
             let domPoints: HTMLInputElement = document.querySelector("input[key='Points']");
+            if(points.toString().length < 7)
+                domPoints.value = ('0000000' + points.toString()).substring(points.toString().length);
+            else
+                domPoints.value = "9999999";
+        }
+        public static fiendpoints(points : number) : void{
+            this.get();
+            let domPoints: HTMLInputElement = document.querySelector("input[key='FriendPoints']");
             if(points.toString().length < 7)
                 domPoints.value = ('0000000' + points.toString()).substring(points.toString().length);
             else

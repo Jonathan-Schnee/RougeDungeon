@@ -57,7 +57,8 @@ declare namespace Script {
         private constructor();
         static get(): Hud;
         static life(life: number): void;
-        static points(points: number): void;
+        static ownpoints(points: number): void;
+        static fiendpoints(points: number): void;
         static chooseItems(activeItem: string): void;
         static showMain(): void;
         protected reduceMutator(_mutator: ƒ.Mutator): void;
@@ -76,6 +77,7 @@ declare namespace Script {
         stonePercent: number;
     }
     export let spawndata: SpawnData;
+    export function sendData(message: string): void;
     export {};
 }
 declare namespace Script {
