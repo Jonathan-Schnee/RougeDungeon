@@ -384,7 +384,8 @@ var Script;
         cmpCamera.projectOrthographic(Script.camdata.left * window.innerWidth, Script.camdata.right * window.innerWidth, Script.camdata.bottom * window.innerHeight, Script.camdata.top * window.innerHeight);
         cameraNode.mtxLocal.translation = new ƒ.Vector3(agent.mtxLocal.translation.x, 0, 0);
         controlls.controlls();
-        receiveData();
+        if (!singlePlayer)
+            receiveData();
         viewport.draw();
         ƒ.AudioManager.default.update();
         ƒ.Physics.world.simulate(); // if physics is included and used

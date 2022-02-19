@@ -132,7 +132,8 @@ namespace Script {
     
     controlls.controlls();
     
-    receiveData();
+    if(!singlePlayer)
+      receiveData();
 
     viewport.draw();
     ƒ.AudioManager.default.update();
