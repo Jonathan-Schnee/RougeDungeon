@@ -403,7 +403,8 @@ var Script;
         Script.spawndata = JSON.parse(await rawSpawnData.text());
     }
     function sendData(message) {
-        client.send(message);
+        if (!singlePlayer)
+            client.send(message);
     }
     Script.sendData = sendData;
     function receiveData() {

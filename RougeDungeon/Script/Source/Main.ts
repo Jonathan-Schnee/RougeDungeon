@@ -155,7 +155,8 @@ namespace Script {
     spawndata = JSON.parse(await rawSpawnData.text());
   }
   export function sendData(message : string){
-    client.send(message);
+    if(!singlePlayer)
+      client.send(message);
   }
   function receiveData(){
     let m = client.getMessage();
