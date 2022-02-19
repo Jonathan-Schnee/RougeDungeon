@@ -435,7 +435,7 @@ var Script;
             let event = this.addEventListener("sendMessage", this.sendMessage);
         }
         async connectToServer() {
-            let domServer = "ws://127.0.0.1:8081"; //wss://rougedungeon.herokuapp.com
+            let domServer = "wss://rougedungeon.herokuapp.com";
             try {
                 client.connectToServer(domServer);
                 // connect to a server with the given url

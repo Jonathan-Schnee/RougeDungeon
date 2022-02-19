@@ -23,7 +23,7 @@ namespace Script {
         }
 
         async connectToServer(): Promise<void> {
-            let domServer: string = "ws://127.0.0.1:8081"; //wss://rougedungeon.herokuapp.com
+            let domServer: string = "wss://rougedungeon.herokuapp.com";
             try {
                 client.connectToServer(domServer);
                 // connect to a server with the given url
