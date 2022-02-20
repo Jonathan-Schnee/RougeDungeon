@@ -144,7 +144,7 @@ declare namespace FudgeNet {
          * Dispatches a {@link FudgeNet.Message} to the server, a specific client or all
          * according to {@link FudgeNet.ROUTE} and `idTarget`
          */
-        dispatch(_message: FudgeNet.Message): void;
+        dispatch(_message: FudgeNet.Message): Promise<void>;
         /**
          * Sends out a disconnect message to all peers, disconnects from all peers and sends a CREATE_MESH-command to the server,
          * to establish RTC-peer-connections between all clients

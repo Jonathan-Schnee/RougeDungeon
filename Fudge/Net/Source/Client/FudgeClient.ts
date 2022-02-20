@@ -96,7 +96,7 @@ namespace FudgeNet {
      * Dispatches a {@link FudgeNet.Message} to the server, a specific client or all  
      * according to {@link FudgeNet.ROUTE} and `idTarget` 
      */
-    public dispatch(_message: FudgeNet.Message): void {
+    async dispatch(_message: FudgeNet.Message): Promise<void> {
       _message.timeSender = Date.now();
       _message.idSource = this.id;
       let message: string = JSON.stringify(_message);
@@ -111,8 +111,11 @@ namespace FudgeNet {
         }
         else {
           // send via RTC to specific peer (if idTarget set) or all peers (if not set)
-          if (_message.idTarget)
+          if (_message.idTarget){
+            if(!this.peers[_message.idTarget])
+              await this.cRstartNegotiation(_message.idTarget);
             this.sendToPeer(_message.idTarget, message);
+          }
           else
             this.sendToAllPeers(message);
         }
